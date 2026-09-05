@@ -78,70 +78,227 @@ export const CanvasShapeItem: React.FC<CanvasShapeItemProps> = ({
 
   const renderShapeContent = () => {
     switch (shape.type) {
-      case 'oval':
+      case 'oval': {
+        const rx = shape.width / 2;
+        const ry = shape.height / 2;
         return (
-          <Ellipse
-            radiusX={shape.width / 2}
-            radiusY={shape.height / 2}
-            fill={fillColor}
-            stroke={stroke}
-            strokeWidth={effectiveStrokeWidth}
-            strokeScaleEnabled={false}
-            shadowColor={isSelected ? stroke : '#000000'}
-            shadowBlur={isSelected ? 14 : 5}
-            shadowOpacity={isSelected ? 0.95 : 0.65}
-          />
+          <Group>
+            {/* Outer Egg Silhouette */}
+            <Ellipse
+              radiusX={rx}
+              radiusY={ry}
+              fill={fillColor}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+              shadowColor={isSelected ? stroke : '#000000'}
+              shadowBlur={isSelected ? 14 : 5}
+              shadowOpacity={isSelected ? 0.95 : 0.65}
+            />
+            {/* Ovoid Central Cross-Contour */}
+            <Ellipse
+              radiusX={rx * 0.96}
+              radiusY={ry * 0.32}
+              stroke={stroke}
+              strokeWidth={Math.max(1.8, effectiveStrokeWidth * 0.55)}
+              strokeScaleEnabled={false}
+              dash={[5, 4]}
+              fill="transparent"
+            />
+            {/* Ovoid Longitudinal Axis */}
+            <Line
+              points={[0, -ry, 0, ry]}
+              stroke={stroke}
+              strokeWidth={Math.max(1.8, effectiveStrokeWidth * 0.55)}
+              strokeScaleEnabled={false}
+              dash={[4, 4]}
+            />
+          </Group>
         );
+      }
 
-      case 'circle':
+      case 'circle': {
+        const r = shape.width / 2;
         return (
-          <Circle
-            radius={shape.width / 2}
-            fill={fillColor}
-            stroke={stroke}
-            strokeWidth={effectiveStrokeWidth}
-            strokeScaleEnabled={false}
-            shadowColor={isSelected ? stroke : '#000000'}
-            shadowBlur={isSelected ? 14 : 5}
-            shadowOpacity={isSelected ? 0.95 : 0.65}
-          />
+          <Group>
+            {/* Loomis Spherical Silhouette */}
+            <Circle
+              radius={r}
+              fill={fillColor}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+              shadowColor={isSelected ? stroke : '#000000'}
+              shadowBlur={isSelected ? 14 : 5}
+              shadowOpacity={isSelected ? 0.95 : 0.65}
+            />
+            {/* Spherical Equator Cross-Contour */}
+            <Ellipse
+              radiusX={r * 0.98}
+              radiusY={r * 0.28}
+              stroke={stroke}
+              strokeWidth={Math.max(1.8, effectiveStrokeWidth * 0.55)}
+              strokeScaleEnabled={false}
+              dash={[4, 4]}
+              fill="transparent"
+            />
+            {/* Spherical Meridian Axis */}
+            <Line
+              points={[0, -r, 0, r]}
+              stroke={stroke}
+              strokeWidth={Math.max(1.8, effectiveStrokeWidth * 0.55)}
+              strokeScaleEnabled={false}
+              dash={[4, 4]}
+            />
+          </Group>
         );
+      }
 
-      case 'box':
-        return (
-          <Rect
-            x={-shape.width / 2}
-            y={-shape.height / 2}
-            width={shape.width}
-            height={shape.height}
-            cornerRadius={6}
-            fill={fillColor}
-            stroke={stroke}
-            strokeWidth={effectiveStrokeWidth}
-            strokeScaleEnabled={false}
-            shadowColor={isSelected ? stroke : '#000000'}
-            shadowBlur={isSelected ? 14 : 5}
-            shadowOpacity={isSelected ? 0.95 : 0.65}
-          />
-        );
+      case 'box': {
+        const w = shape.width;
+        const h = shape.height;
+        const depth = Math.min(22, Math.max(8, Math.min(w, h) * 0.22));
+        const dx = depth * 0.72;
+        const dy = -depth * 0.62;
+        const topFacetFill = hexToRgba(shape.fillColor, Math.min(0.85, effectiveFillAlpha * 1.35));
+        const sideFacetFill = hexToRgba(shape.fillColor, Math.min(0.85, effectiveFillAlpha * 0.75));
 
-      case 'capsule':
         return (
-          <Rect
-            x={-shape.width / 2}
-            y={-shape.height / 2}
-            width={shape.width}
-            height={shape.height}
-            cornerRadius={shape.width / 2}
-            fill={fillColor}
-            stroke={stroke}
-            strokeWidth={effectiveStrokeWidth}
-            strokeScaleEnabled={false}
-            shadowColor={isSelected ? stroke : '#000000'}
-            shadowBlur={isSelected ? 14 : 5}
-            shadowOpacity={isSelected ? 0.95 : 0.65}
-          />
+          <Group>
+            {/* Receding Top Isometric Facet */}
+            <Line
+              points={[-w / 2, -h / 2, -w / 2 + dx, -h / 2 + dy, w / 2 + dx, -h / 2 + dy, w / 2, -h / 2]}
+              closed={true}
+              fill={topFacetFill}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth * 0.85}
+              strokeScaleEnabled={false}
+            />
+            {/* Receding Side Isometric Facet */}
+            <Line
+              points={[w / 2, -h / 2, w / 2 + dx, -h / 2 + dy, w / 2 + dx, h / 2 + dy, w / 2, h / 2]}
+              closed={true}
+              fill={sideFacetFill}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth * 0.85}
+              strokeScaleEnabled={false}
+            />
+            {/* Front Box Face */}
+            <Rect
+              x={-w / 2}
+              y={-h / 2}
+              width={w}
+              height={h}
+              cornerRadius={2}
+              fill={fillColor}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+              shadowColor={isSelected ? stroke : '#000000'}
+              shadowBlur={isSelected ? 14 : 5}
+              shadowOpacity={isSelected ? 0.95 : 0.65}
+            />
+            {/* Perspective Depth Connector Lines */}
+            <Line
+              points={[-w / 2, -h / 2, -w / 2 + dx, -h / 2 + dy]}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth * 0.8}
+              strokeScaleEnabled={false}
+            />
+            <Line
+              points={[w / 2, -h / 2, w / 2 + dx, -h / 2 + dy]}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth * 0.8}
+              strokeScaleEnabled={false}
+            />
+            <Line
+              points={[w / 2, h / 2, w / 2 + dx, h / 2 + dy]}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth * 0.8}
+              strokeScaleEnabled={false}
+            />
+          </Group>
         );
+      }
+
+      case 'cylinder':
+      case 'capsule': {
+        const w = shape.width;
+        const h = shape.height;
+        const rx = w / 2;
+        const ry = Math.max(3.5, Math.min(rx * 0.42, h * 0.22));
+        const topY = -h / 2 + ry;
+        const botY = h / 2 - ry;
+        const bodyH = Math.max(0, h - 2 * ry);
+
+        return (
+          <Group>
+            {/* Cylindrical Central Body Fill */}
+            <Rect
+              x={-rx}
+              y={topY}
+              width={w}
+              height={bodyH}
+              fill={fillColor}
+              strokeScaleEnabled={false}
+            />
+            {/* Bottom Base Ellipse */}
+            <Ellipse
+              x={0}
+              y={botY}
+              radiusX={rx}
+              radiusY={ry}
+              fill={fillColor}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+              shadowColor={isSelected ? stroke : '#000000'}
+              shadowBlur={isSelected ? 14 : 5}
+              shadowOpacity={isSelected ? 0.95 : 0.65}
+            />
+            {/* Lateral Edge Left */}
+            <Line
+              points={[-rx, topY, -rx, botY]}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+            />
+            {/* Lateral Edge Right */}
+            <Line
+              points={[rx, topY, rx, botY]}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+            />
+            {/* Mid-Body Cross-Contour Curvature Arc */}
+            <Ellipse
+              x={0}
+              y={0}
+              radiusX={rx * 0.96}
+              radiusY={ry * 0.9}
+              stroke={stroke}
+              strokeWidth={Math.max(1.8, effectiveStrokeWidth * 0.55)}
+              strokeScaleEnabled={false}
+              dash={[5, 4]}
+              fill="transparent"
+            />
+            {/* Top Rim Cap Ellipse */}
+            <Ellipse
+              x={0}
+              y={topY}
+              radiusX={rx}
+              radiusY={ry}
+              fill={fillColor}
+              stroke={stroke}
+              strokeWidth={effectiveStrokeWidth}
+              strokeScaleEnabled={false}
+              shadowColor={isSelected ? stroke : '#000000'}
+              shadowBlur={isSelected ? 14 : 5}
+              shadowOpacity={isSelected ? 0.95 : 0.65}
+            />
+          </Group>
+        );
+      }
 
       case 'cross_contour':
         return (

@@ -362,7 +362,7 @@ export const StudioSidebar: React.FC<StudioSidebarProps> = ({
                 +Oval
               </button>
               <button
-                onClick={() => onAddPrimitive('capsule')}
+                onClick={() => onAddPrimitive('cylinder')}
                 className="py-1 px-1.5 rounded-lg bg-studio-800 hover:bg-studio-700 text-studio-200 border border-studio-700/80 text-[11px] font-medium transition text-center"
                 title="Quick insert Cylinder"
               >

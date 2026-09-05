@@ -70,7 +70,7 @@ export function useShapeStore() {
     const x = options?.x ?? 200;
     const y = options?.y ?? 200;
     const width = options?.width ?? (type === 'circle' ? 70 : type === 'oval' ? 80 : 60);
-    const height = options?.height ?? (type === 'circle' ? 70 : type === 'capsule' ? 120 : 90);
+    const height = options?.height ?? (type === 'circle' ? 70 : (type === 'cylinder' || type === 'capsule') ? 120 : 90);
 
     let strokeColor = Proportions.COLORS.torsoStroke;
     let fillColor = Proportions.COLORS.torsoFill;

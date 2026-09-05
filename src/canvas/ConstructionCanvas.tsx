@@ -320,7 +320,7 @@ export const ConstructionCanvas: React.FC<ConstructionCanvasProps> = ({
     if (activeDrawTool === 'rectangle') primType = 'box';
     else if (activeDrawTool === 'circle') primType = 'circle';
     else if (activeDrawTool === 'oval') primType = 'oval';
-    else if (activeDrawTool === 'cylinder') primType = 'capsule';
+    else if (activeDrawTool === 'cylinder') primType = 'cylinder';
     else if (activeDrawTool === 'line') {
       primType = 'line_of_action';
       points = [drawingState.startX, drawingState.startY, drawingState.currentX, drawingState.currentY];
@@ -848,65 +848,177 @@ export const ConstructionCanvas: React.FC<ConstructionCanvasProps> = ({
                 const y1 = Math.min(drawingState.startY, drawingState.currentY);
                 const w = Math.max(2, Math.abs(drawingState.currentX - drawingState.startX));
                 const h = Math.max(2, Math.abs(drawingState.currentY - drawingState.startY));
+                const x2 = x1 + w;
+                const y2 = y1 + h;
                 const cx = (drawingState.startX + drawingState.currentX) / 2;
                 const cy = (drawingState.startY + drawingState.currentY) / 2;
 
                 if (activeDrawTool === 'rectangle') {
+                  const depth = Math.min(22, Math.max(8, Math.min(w, h) * 0.22));
+                  const dx = depth * 0.72;
+                  const dy = -depth * 0.62;
                   return (
-                    <Rect
-                      x={x1}
-                      y={y1}
-                      width={w}
-                      height={h}
-                      cornerRadius={6}
-                      stroke="#38bdf8"
-                      strokeWidth={2.5}
-                      dash={[5, 4]}
-                      fill="rgba(56, 189, 248, 0.25)"
-                    />
+                    <Group>
+                      {/* Receding Top Facet */}
+                      <Line
+                        points={[x1, y1, x1 + dx, y1 + dy, x2 + dx, y1 + dy, x2, y1]}
+                        closed={true}
+                        stroke="#38bdf8"
+                        strokeWidth={2}
+                        dash={[4, 3]}
+                        fill="rgba(56, 189, 248, 0.2)"
+                      />
+                      {/* Receding Side Facet */}
+                      <Line
+                        points={[x2, y1, x2 + dx, y1 + dy, x2 + dx, y2 + dy, x2, y2]}
+                        closed={true}
+                        stroke="#38bdf8"
+                        strokeWidth={2}
+                        dash={[4, 3]}
+                        fill="rgba(56, 189, 248, 0.15)"
+                      />
+                      {/* Front Box Face */}
+                      <Rect
+                        x={x1}
+                        y={y1}
+                        width={w}
+                        height={h}
+                        cornerRadius={2}
+                        stroke="#38bdf8"
+                        strokeWidth={2.5}
+                        dash={[5, 4]}
+                        fill="rgba(56, 189, 248, 0.25)"
+                      />
+                      {/* Perspective Corner Lines */}
+                      <Line points={[x1, y1, x1 + dx, y1 + dy]} stroke="#38bdf8" strokeWidth={1.8} dash={[4, 3]} />
+                      <Line points={[x2, y1, x2 + dx, y1 + dy]} stroke="#38bdf8" strokeWidth={1.8} dash={[4, 3]} />
+                      <Line points={[x2, y2, x2 + dx, y2 + dy]} stroke="#38bdf8" strokeWidth={1.8} dash={[4, 3]} />
+                    </Group>
                   );
                 }
                 if (activeDrawTool === 'circle') {
                   const r = Math.max(w, h) / 2;
                   return (
-                    <Circle
-                      x={cx}
-                      y={cy}
-                      radius={r}
-                      stroke="#38bdf8"
-                      strokeWidth={2.5}
-                      dash={[5, 4]}
-                      fill="rgba(56, 189, 248, 0.25)"
-                    />
+                    <Group>
+                      <Circle
+                        x={cx}
+                        y={cy}
+                        radius={r}
+                        stroke="#38bdf8"
+                        strokeWidth={2.5}
+                        dash={[5, 4]}
+                        fill="rgba(56, 189, 248, 0.25)"
+                      />
+                      <Ellipse
+                        x={cx}
+                        y={cy}
+                        radiusX={r * 0.98}
+                        radiusY={r * 0.28}
+                        stroke="#38bdf8"
+                        strokeWidth={1.8}
+                        dash={[4, 4]}
+                        fill="transparent"
+                      />
+                      <Line
+                        points={[cx, cy - r, cx, cy + r]}
+                        stroke="#38bdf8"
+                        strokeWidth={1.8}
+                        dash={[4, 4]}
+                      />
+                    </Group>
                   );
                 }
                 if (activeDrawTool === 'oval') {
+                  const rx = w / 2;
+                  const ry = h / 2;
                   return (
-                    <Ellipse
-                      x={cx}
-                      y={cy}
-                      radiusX={w / 2}
-                      radiusY={h / 2}
-                      stroke="#38bdf8"
-                      strokeWidth={2.5}
-                      dash={[5, 4]}
-                      fill="rgba(56, 189, 248, 0.25)"
-                    />
+                    <Group>
+                      <Ellipse
+                        x={cx}
+                        y={cy}
+                        radiusX={rx}
+                        radiusY={ry}
+                        stroke="#38bdf8"
+                        strokeWidth={2.5}
+                        dash={[5, 4]}
+                        fill="rgba(56, 189, 248, 0.25)"
+                      />
+                      <Ellipse
+                        x={cx}
+                        y={cy}
+                        radiusX={rx * 0.96}
+                        radiusY={ry * 0.32}
+                        stroke="#38bdf8"
+                        strokeWidth={1.8}
+                        dash={[4, 4]}
+                        fill="transparent"
+                      />
+                      <Line
+                        points={[cx, cy - ry, cx, cy + ry]}
+                        stroke="#38bdf8"
+                        strokeWidth={1.8}
+                        dash={[4, 4]}
+                      />
+                    </Group>
                   );
                 }
                 if (activeDrawTool === 'cylinder') {
+                  const rx = w / 2;
+                  const ry = Math.max(3.5, Math.min(rx * 0.42, h * 0.22));
+                  const topY = y1 + ry;
+                  const botY = y2 - ry;
+                  const bodyH = Math.max(0, h - 2 * ry);
+
                   return (
-                    <Rect
-                      x={x1}
-                      y={y1}
-                      width={w}
-                      height={h}
-                      cornerRadius={w / 2}
-                      stroke="#38bdf8"
-                      strokeWidth={2.5}
-                      dash={[5, 4]}
-                      fill="rgba(56, 189, 248, 0.25)"
-                    />
+                    <Group>
+                      {/* Cylindrical Body */}
+                      <Rect
+                        x={x1}
+                        y={topY}
+                        width={w}
+                        height={bodyH}
+                        stroke="#38bdf8"
+                        strokeWidth={2}
+                        dash={[5, 4]}
+                        fill="rgba(56, 189, 248, 0.2)"
+                      />
+                      {/* Bottom Base */}
+                      <Ellipse
+                        x={cx}
+                        y={botY}
+                        radiusX={rx}
+                        radiusY={ry}
+                        stroke="#38bdf8"
+                        strokeWidth={2}
+                        dash={[5, 4]}
+                        fill="rgba(56, 189, 248, 0.2)"
+                      />
+                      {/* Lateral Edges */}
+                      <Line points={[x1, topY, x1, botY]} stroke="#38bdf8" strokeWidth={2.5} dash={[5, 4]} />
+                      <Line points={[x2, topY, x2, botY]} stroke="#38bdf8" strokeWidth={2.5} dash={[5, 4]} />
+                      {/* Mid Cross-Contour */}
+                      <Ellipse
+                        x={cx}
+                        y={cy}
+                        radiusX={rx * 0.96}
+                        radiusY={ry * 0.9}
+                        stroke="#38bdf8"
+                        strokeWidth={1.8}
+                        dash={[4, 3]}
+                        fill="transparent"
+                      />
+                      {/* Top Rim Cap */}
+                      <Ellipse
+                        x={cx}
+                        y={topY}
+                        radiusX={rx}
+                        radiusY={ry}
+                        stroke="#38bdf8"
+                        strokeWidth={2.5}
+                        dash={[5, 4]}
+                        fill="rgba(56, 189, 248, 0.35)"
+                      />
+                    </Group>
                   );
                 }
                 if (activeDrawTool === 'line') {

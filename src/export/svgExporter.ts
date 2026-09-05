@@ -21,23 +21,58 @@ export function generateSvgString(
       case 'oval': {
         const rx = shape.width / 2;
         const ry = shape.height / 2;
-        return `    <ellipse cx="${shape.x}" cy="${shape.y}" rx="${rx}" ry="${ry}" transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" data-name="${shape.name}" />`;
+        return `    <g transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" data-name="${shape.name}">
+      <ellipse cx="${shape.x}" cy="${shape.y}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+      <ellipse cx="${shape.x}" cy="${shape.y}" rx="${rx * 0.96}" ry="${ry * 0.32}" fill="none" stroke="${stroke}" stroke-width="${Math.max(1.8, strokeWidth * 0.55)}" stroke-dasharray="5,4" />
+      <line x1="${shape.x}" y1="${shape.y - ry}" x2="${shape.x}" y2="${shape.y + ry}" stroke="${stroke}" stroke-width="${Math.max(1.8, strokeWidth * 0.55)}" stroke-dasharray="4,4" />
+    </g>`;
       }
       case 'circle': {
         const r = shape.width / 2;
-        return `    <circle cx="${shape.x}" cy="${shape.y}" r="${r}" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" data-name="${shape.name}" />`;
+        return `    <g transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" data-name="${shape.name}">
+      <circle cx="${shape.x}" cy="${shape.y}" r="${r}" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+      <ellipse cx="${shape.x}" cy="${shape.y}" rx="${r * 0.98}" ry="${r * 0.28}" fill="none" stroke="${stroke}" stroke-width="${Math.max(1.8, strokeWidth * 0.55)}" stroke-dasharray="4,4" />
+      <line x1="${shape.x}" y1="${shape.y - r}" x2="${shape.x}" y2="${shape.y + r}" stroke="${stroke}" stroke-width="${Math.max(1.8, strokeWidth * 0.55)}" stroke-dasharray="4,4" />
+    </g>`;
       }
       case 'box': {
-        const x = shape.x - shape.width / 2;
-        const y = shape.y - shape.height / 2;
-        return `    <rect x="${x}" y="${y}" width="${shape.width}" height="${shape.height}" rx="6" ry="6" transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" data-name="${shape.name}" />`;
+        const w = shape.width;
+        const h = shape.height;
+        const x = shape.x - w / 2;
+        const y = shape.y - h / 2;
+        const depth = Math.min(22, Math.max(8, Math.min(w, h) * 0.22));
+        const dx = depth * 0.72;
+        const dy = -depth * 0.62;
+        const topPoints = `${x},${y} ${x + dx},${y + dy} ${x + w + dx},${y + dy} ${x + w},${y}`;
+        const sidePoints = `${x + w},${y} ${x + w + dx},${y + dy} ${x + w + dx},${y + h + dy} ${x + w},${y + h}`;
+
+        return `    <g transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" data-name="${shape.name}">
+      <polygon points="${topPoints}" fill="${fill}" fill-opacity="${Math.min(1.0, fillOpacity * 1.3)}" stroke="${stroke}" stroke-width="${strokeWidth * 0.85}" stroke-linejoin="round" />
+      <polygon points="${sidePoints}" fill="${fill}" fill-opacity="${Math.min(1.0, fillOpacity * 0.75)}" stroke="${stroke}" stroke-width="${strokeWidth * 0.85}" stroke-linejoin="round" />
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" ry="2" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+      <line x1="${x}" y1="${y}" x2="${x + dx}" y2="${y + dy}" stroke="${stroke}" stroke-width="${strokeWidth * 0.8}" />
+      <line x1="${x + w}" y1="${y}" x2="${x + w + dx}" y2="${y + dy}" stroke="${stroke}" stroke-width="${strokeWidth * 0.8}" />
+      <line x1="${x + w}" y1="${y + h}" x2="${x + w + dx}" y2="${y + h + dy}" stroke="${stroke}" stroke-width="${strokeWidth * 0.8}" />
+    </g>`;
       }
+      case 'cylinder':
       case 'capsule': {
-        // Render capsule as a rounded rectangle with half-width corner radius
-        const x = shape.x - shape.width / 2;
-        const y = shape.y - shape.height / 2;
-        const r = shape.width / 2;
-        return `    <rect x="${x}" y="${y}" width="${shape.width}" height="${shape.height}" rx="${r}" ry="${r}" transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" data-name="${shape.name}" />`;
+        const rx = shape.width / 2;
+        const ry = Math.max(3.5, Math.min(rx * 0.42, shape.height * 0.22));
+        const topY = shape.y - shape.height / 2 + ry;
+        const botY = shape.y + shape.height / 2 - ry;
+        const bodyH = Math.max(0, shape.height - 2 * ry);
+        const leftX = shape.x - rx;
+        const rightX = shape.x + rx;
+
+        return `    <g transform="rotate(${shape.rotation} ${shape.x} ${shape.y})" data-name="${shape.name}">
+      <rect x="${leftX}" y="${topY}" width="${shape.width}" height="${bodyH}" fill="${fill}" fill-opacity="${fillOpacity}" stroke="none" />
+      <ellipse cx="${shape.x}" cy="${botY}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+      <line x1="${leftX}" y1="${topY}" x2="${leftX}" y2="${botY}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+      <line x1="${rightX}" y1="${topY}" x2="${rightX}" y2="${botY}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+      <ellipse cx="${shape.x}" cy="${shape.y}" rx="${rx * 0.96}" ry="${ry * 0.9}" fill="none" stroke="${stroke}" stroke-width="${Math.max(2, strokeWidth * 0.6)}" stroke-dasharray="5,4" />
+      <ellipse cx="${shape.x}" cy="${topY}" rx="${rx}" ry="${ry}" fill="${fill}" fill-opacity="${fillOpacity}" stroke="${stroke}" stroke-width="${strokeWidth}" />
+    </g>`;
       }
       case 'cross_contour': {
         const rx = shape.width / 2;

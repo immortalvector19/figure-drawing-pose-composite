@@ -1,11 +1,13 @@
+import React, { useRef } from 'react';
 import { ConstructionMode } from '../types/shapes';
-import { Download, Sparkles, Box, FileCode, CheckCircle2, RefreshCw, BookOpen, Pencil } from 'lucide-react';
+import { Download, Sparkles, Box, FileCode, CheckCircle2, RefreshCw, BookOpen, Pencil, Upload } from 'lucide-react';
 
 interface AppHeaderProps {
   modelReady: boolean;
   constructionMode: ConstructionMode;
   onToggleMode: (mode: ConstructionMode) => void;
   onLoadSample: (sampleType: 'standing' | 'contrapposto' | 'foreshortened' | 'portrait') => void;
+  onMediaLoaded?: (file: File, type: 'image' | 'video') => void;
   onExportPng: () => void;
   onExportSvg: () => void;
   onOpenAnatomyGuide: () => void;
@@ -17,11 +19,21 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   constructionMode,
   onToggleMode,
   onLoadSample,
+  onMediaLoaded,
   onExportPng,
   onExportSvg,
   onOpenAnatomyGuide,
   hasShapes,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !onMediaLoaded) return;
+    const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(file.name);
+    onMediaLoaded(file, isVideo ? 'video' : 'image');
+    e.target.value = '';
+  };
   return (
     <header className="h-14 bg-studio-800 border-b border-studio-700 px-4 flex items-center justify-between z-30 select-none">
       {/* Brand & Concept */}
@@ -117,8 +129,27 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         </div>
       </div>
 
-      {/* Right: Anatomy Guide & Export Actions */}
+      {/* Right: Upload Media, Anatomy Guide & Export Actions */}
       <div className="flex items-center space-x-2">
+        {onMediaLoaded && (
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition border border-emerald-500/40 shadow-sm cursor-pointer active:scale-95"
+              title="Upload reference photo or video"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>Upload Media</span>
+            </button>
+          </>
+        )}
         <button
           onClick={onOpenAnatomyGuide}
           className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-500/15 hover:bg-brand-500/25 text-brand-accent hover:text-white transition border border-brand-accent/30 shadow-sm"

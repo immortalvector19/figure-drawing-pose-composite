@@ -207,7 +207,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
           +Box
         </button>
         <button
-          onClick={() => onAddPrimitive('capsule')}
+          onClick={() => onAddPrimitive('cylinder')}
           className="px-2 py-1 rounded-md bg-studio-700/50 hover:bg-studio-700 text-studio-200 border border-studio-600/40 hover:text-white transition"
           title="Insert default Cylinder primitive"
         >

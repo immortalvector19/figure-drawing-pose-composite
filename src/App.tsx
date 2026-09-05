@@ -551,6 +551,7 @@ export function App() {
         constructionMode={constructionMode}
         onToggleMode={handleToggleMode}
         onLoadSample={handleLoadSample}
+        onMediaLoaded={handleMediaLoaded}
         onExportPng={handleExportPng}
         onExportSvg={handleExportSvg}
         onOpenAnatomyGuide={() => setShowAnatomyGuide(true)}

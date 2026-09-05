@@ -19,6 +19,7 @@ export type PrimitiveType =
   | 'circle'
   | 'box'
   | 'capsule'
+  | 'cylinder'
   | 'cross_contour'
   | 'line_of_action'
   | 'rhythm_line'
