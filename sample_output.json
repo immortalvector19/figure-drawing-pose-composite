@@ -1,0 +1,1155 @@
+{
+  "image_dimensions": {
+    "width": 800,
+    "height": 600
+  },
+  "total_shapes_detected": 5,
+  "total_landmarks_detected": 75,
+  "processing_time_ms": 167.82,
+  "shapes": [
+    {
+      "id": "primitive-1",
+      "type": "oval",
+      "name": "Oval/Egg #1",
+      "center": {
+        "x": 559.95,
+        "y": 450.0
+      },
+      "dimensions": {
+        "width": 131.07,
+        "height": 220.84
+      },
+      "angle": 35.08,
+      "confidence": 0.894,
+      "metrics": {
+        "area": 22728.0,
+        "perimeter": 594.4,
+        "circularity": 0.808,
+        "rectangularity": 0.781,
+        "aspect_ratio": 1.684
+      },
+      "vertices": [
+        [
+          553.31,
+          578.54
+        ],
+        [
+          443.92,
+          505.62
+        ],
+        [
+          566.69,
+          321.46
+        ],
+        [
+          676.08,
+          394.38
+        ]
+      ],
+      "landmarks": [
+        {
+          "x": 559.94,
+          "y": 449.94,
+          "type": "centroid",
+          "saliency": 1.0
+        },
+        {
+          "x": 626.0,
+          "y": 361.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 643.0,
+          "y": 418.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 608.0,
+          "y": 496.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 548.0,
+          "y": 543.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 494.0,
+          "y": 539.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 477.0,
+          "y": 482.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 509.0,
+          "y": 408.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 574.0,
+          "y": 356.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 478.0,
+          "y": 495.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 577.0,
+          "y": 526.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 589.0,
+          "y": 516.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 483.0,
+          "y": 523.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 640.0,
+          "y": 383.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 484.0,
+          "y": 455.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 640.0,
+          "y": 432.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 642.0,
+          "y": 402.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 511.0,
+          "y": 546.0,
+          "type": "corner",
+          "saliency": 0.9
+        }
+      ],
+      "cross_contours": [],
+      "metadata": {}
+    },
+    {
+      "id": "primitive-2",
+      "type": "box",
+      "name": "Box/Rectangle #2",
+      "center": {
+        "x": 549.49,
+        "y": 189.47
+      },
+      "dimensions": {
+        "width": 111.45,
+        "height": 192.2
+      },
+      "angle": -24.97,
+      "confidence": 0.983,
+      "metrics": {
+        "area": 21061.0,
+        "perimeter": 647.2,
+        "circularity": 0.632,
+        "rectangularity": 0.983,
+        "aspect_ratio": 1.725
+      },
+      "vertices": [
+        [
+          485.89,
+          280.55
+        ],
+        [
+          438.85,
+          179.52
+        ],
+        [
+          613.08,
+          98.39
+        ],
+        [
+          660.13,
+          199.42
+        ]
+      ],
+      "landmarks": [
+        {
+          "x": 549.48,
+          "y": 189.48,
+          "type": "centroid",
+          "saliency": 1.0
+        },
+        {
+          "x": 612.0,
+          "y": 100.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 659.0,
+          "y": 199.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 487.0,
+          "y": 279.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 440.0,
+          "y": 180.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 571.0,
+          "y": 119.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 586.0,
+          "y": 112.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 621.0,
+          "y": 118.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 524.0,
+          "y": 141.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 631.0,
+          "y": 139.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 539.0,
+          "y": 134.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 554.0,
+          "y": 127.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 641.0,
+          "y": 161.0,
+          "type": "corner",
+          "saliency": 0.9
+        }
+      ],
+      "cross_contours": [],
+      "metadata": {}
+    },
+    {
+      "id": "primitive-3",
+      "type": "circle",
+      "name": "Sphere/Circle #3",
+      "center": {
+        "x": 179.96,
+        "y": 219.96
+      },
+      "dimensions": {
+        "width": 160.09,
+        "height": 160.09
+      },
+      "angle": 0.0,
+      "confidence": 0.887,
+      "metrics": {
+        "area": 20128.0,
+        "perimeter": 533.9,
+        "circularity": 0.887,
+        "rectangularity": 0.786,
+        "aspect_ratio": 1.0
+      },
+      "vertices": [
+        [
+          260.0,
+          300.0
+        ],
+        [
+          100.0,
+          300.0
+        ],
+        [
+          100.0,
+          140.0
+        ],
+        [
+          260.0,
+          140.0
+        ]
+      ],
+      "landmarks": [
+        {
+          "x": 179.91,
+          "y": 219.87,
+          "type": "centroid",
+          "saliency": 1.0
+        },
+        {
+          "x": 191.0,
+          "y": 140.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 244.0,
+          "y": 171.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 260.0,
+          "y": 230.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 229.0,
+          "y": 284.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 167.0,
+          "y": 299.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 116.0,
+          "y": 269.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 100.0,
+          "y": 209.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 131.0,
+          "y": 156.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 101.0,
+          "y": 221.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 181.0,
+          "y": 300.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 161.0,
+          "y": 143.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 255.0,
+          "y": 192.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 105.0,
+          "y": 192.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 102.0,
+          "y": 239.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 257.0,
+          "y": 242.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 202.0,
+          "y": 297.0,
+          "type": "corner",
+          "saliency": 0.9
+        }
+      ],
+      "cross_contours": [],
+      "metadata": {}
+    },
+    {
+      "id": "primitive-4",
+      "type": "cylinder",
+      "name": "Cylinder/Capsule #4",
+      "center": {
+        "x": 200.0,
+        "y": 460.0
+      },
+      "dimensions": {
+        "width": 92.0,
+        "height": 210.0
+      },
+      "angle": -90.0,
+      "confidence": 0.945,
+      "metrics": {
+        "area": 17352.0,
+        "perimeter": 550.7,
+        "circularity": 0.719,
+        "rectangularity": 0.898,
+        "aspect_ratio": 2.283
+      },
+      "vertices": [
+        [
+          246.0,
+          565.0
+        ],
+        [
+          154.0,
+          565.0
+        ],
+        [
+          154.0,
+          355.0
+        ],
+        [
+          246.0,
+          355.0
+        ]
+      ],
+      "landmarks": [
+        {
+          "x": 199.77,
+          "y": 459.88,
+          "type": "centroid",
+          "saliency": 1.0
+        },
+        {
+          "x": 208.0,
+          "y": 355.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 245.0,
+          "y": 392.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 246.0,
+          "y": 517.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 236.0,
+          "y": 548.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 199.0,
+          "y": 565.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 156.0,
+          "y": 532.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 154.0,
+          "y": 401.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 172.0,
+          "y": 364.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 186.0,
+          "y": 358.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 157.0,
+          "y": 386.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 243.0,
+          "y": 534.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 186.0,
+          "y": 563.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 156.0,
+          "y": 519.0,
+          "type": "corner",
+          "saliency": 0.9
+        }
+      ],
+      "cross_contours": [
+        {
+          "center_x": 126.5,
+          "center_y": 460.0,
+          "radius_x": 44.16,
+          "radius_y": 20.24,
+          "angle": -90.0
+        },
+        {
+          "center_x": 200.0,
+          "center_y": 460.0,
+          "radius_x": 44.16,
+          "radius_y": 20.24,
+          "angle": -90.0
+        },
+        {
+          "center_x": 273.5,
+          "center_y": 460.0,
+          "radius_x": 44.16,
+          "radius_y": 20.24,
+          "angle": -90.0
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "primitive-5",
+      "type": "wedge",
+      "name": "Wedge/Block #5",
+      "center": {
+        "x": 390.0,
+        "y": 324.5
+      },
+      "dimensions": {
+        "width": 120.0,
+        "height": 131.0
+      },
+      "angle": -90.0,
+      "confidence": 0.985,
+      "metrics": {
+        "area": 7934.0,
+        "perimeter": 431.7,
+        "circularity": 0.535,
+        "rectangularity": 0.505,
+        "aspect_ratio": 1.092
+      },
+      "vertices": [
+        [
+          450.0,
+          390.0
+        ],
+        [
+          330.0,
+          390.0
+        ],
+        [
+          330.0,
+          259.0
+        ],
+        [
+          450.0,
+          259.0
+        ]
+      ],
+      "landmarks": [
+        {
+          "x": 389.97,
+          "y": 346.29,
+          "type": "centroid",
+          "saliency": 1.0
+        },
+        {
+          "x": 390.0,
+          "y": 259.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 450.0,
+          "y": 390.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 330.0,
+          "y": 390.0,
+          "type": "extreme",
+          "saliency": 0.85
+        },
+        {
+          "x": 403.0,
+          "y": 286.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 377.0,
+          "y": 286.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 371.0,
+          "y": 301.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 409.0,
+          "y": 301.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 421.0,
+          "y": 327.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 359.0,
+          "y": 327.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 433.0,
+          "y": 353.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 347.0,
+          "y": 353.0,
+          "type": "corner",
+          "saliency": 0.9
+        },
+        {
+          "x": 443.0,
+          "y": 375.0,
+          "type": "corner",
+          "saliency": 0.9
+        }
+      ],
+      "cross_contours": [],
+      "metadata": {}
+    }
+  ],
+  "landmarks": [
+    {
+      "x": 559.94,
+      "y": 449.94,
+      "type": "centroid",
+      "saliency": 1.0
+    },
+    {
+      "x": 626.0,
+      "y": 361.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 643.0,
+      "y": 418.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 608.0,
+      "y": 496.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 548.0,
+      "y": 543.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 494.0,
+      "y": 539.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 477.0,
+      "y": 482.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 509.0,
+      "y": 408.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 574.0,
+      "y": 356.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 478.0,
+      "y": 495.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 577.0,
+      "y": 526.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 589.0,
+      "y": 516.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 483.0,
+      "y": 523.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 640.0,
+      "y": 383.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 484.0,
+      "y": 455.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 640.0,
+      "y": 432.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 642.0,
+      "y": 402.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 511.0,
+      "y": 546.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 549.48,
+      "y": 189.48,
+      "type": "centroid",
+      "saliency": 1.0
+    },
+    {
+      "x": 612.0,
+      "y": 100.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 659.0,
+      "y": 199.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 487.0,
+      "y": 279.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 440.0,
+      "y": 180.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 571.0,
+      "y": 119.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 586.0,
+      "y": 112.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 621.0,
+      "y": 118.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 524.0,
+      "y": 141.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 631.0,
+      "y": 139.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 539.0,
+      "y": 134.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 554.0,
+      "y": 127.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 641.0,
+      "y": 161.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 179.91,
+      "y": 219.87,
+      "type": "centroid",
+      "saliency": 1.0
+    },
+    {
+      "x": 191.0,
+      "y": 140.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 244.0,
+      "y": 171.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 260.0,
+      "y": 230.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 229.0,
+      "y": 284.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 167.0,
+      "y": 299.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 116.0,
+      "y": 269.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 100.0,
+      "y": 209.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 131.0,
+      "y": 156.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 101.0,
+      "y": 221.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 181.0,
+      "y": 300.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 161.0,
+      "y": 143.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 255.0,
+      "y": 192.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 105.0,
+      "y": 192.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 102.0,
+      "y": 239.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 257.0,
+      "y": 242.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 202.0,
+      "y": 297.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 199.77,
+      "y": 459.88,
+      "type": "centroid",
+      "saliency": 1.0
+    },
+    {
+      "x": 208.0,
+      "y": 355.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 245.0,
+      "y": 392.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 246.0,
+      "y": 517.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 236.0,
+      "y": 548.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 199.0,
+      "y": 565.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 156.0,
+      "y": 532.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 154.0,
+      "y": 401.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 172.0,
+      "y": 364.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 186.0,
+      "y": 358.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 157.0,
+      "y": 386.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 243.0,
+      "y": 534.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 186.0,
+      "y": 563.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 156.0,
+      "y": 519.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 389.97,
+      "y": 346.29,
+      "type": "centroid",
+      "saliency": 1.0
+    },
+    {
+      "x": 390.0,
+      "y": 259.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 450.0,
+      "y": 390.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 330.0,
+      "y": 390.0,
+      "type": "extreme",
+      "saliency": 0.85
+    },
+    {
+      "x": 403.0,
+      "y": 286.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 377.0,
+      "y": 286.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 371.0,
+      "y": 301.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 409.0,
+      "y": 301.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 421.0,
+      "y": 327.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 359.0,
+      "y": 327.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 433.0,
+      "y": 353.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 347.0,
+      "y": 353.0,
+      "type": "corner",
+      "saliency": 0.9
+    },
+    {
+      "x": 443.0,
+      "y": 375.0,
+      "type": "corner",
+      "saliency": 0.9
+    }
+  ]
+}

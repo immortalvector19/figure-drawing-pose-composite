@@ -1,0 +1,28 @@
+﻿# Node dependencies & build artifacts
+node_modules/
+dist/
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.venv
+venv/
+env/
+
+# Model binaries (automatically fetched locally on first run)
+models/*.task
+models/*.onnx
+
+# Temporary test outputs & cache
+test_run.png
+test_composite.png
+*.log
+.tempmediaStorage/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.gemini/
