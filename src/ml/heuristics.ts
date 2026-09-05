@@ -27,7 +27,7 @@ export function evaluateDetectionHeuristics(
     alerts.push({
       type: 'info',
       title: 'Multiple People Detected',
-      message: `Detected ${totalPosesDetected} figures. Currently focusing construction forms on the primary subject.`
+      message: `Detected ${totalPosesDetected} figures. Construction forms and 3D poses have been generated for all figures.`
     });
   }
 

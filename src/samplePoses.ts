@@ -99,5 +99,63 @@ export function createSyntheticPose(options: {
     worldLandmarks,
     confidence: options.lowConfidence ? 0.42 : 0.94,
     totalPosesDetected: 1,
+    allPoses: [
+      {
+        landmarks,
+        worldLandmarks,
+        confidence: options.lowConfidence ? 0.42 : 0.94,
+        figureIndex: 0,
+      },
+    ],
+  };
+}
+
+/**
+ * Creates a synthetic multi-figure pose dataset containing 2 distinct figures
+ * standing side-by-side (Figure 1: Contrapposto, Figure 2: Dynamic Pose).
+ */
+export function createMultiFigureSyntheticPose(): PoseDetectionResult {
+  const pose1 = createSyntheticPose({ contrapposto: true });
+  const pose2 = createSyntheticPose({ foreshortenedArm: true });
+
+  // Shift Figure 1 to the left (x in [0.08, 0.48])
+  const fig1Landmarks = pose1.landmarks.map(lm => ({
+    ...lm,
+    x: lm.x * 0.72 + 0.05,
+  }));
+  const fig1World = pose1.worldLandmarks.map(wlm => ({
+    ...wlm,
+    x: wlm.x - 0.45,
+  }));
+
+  // Shift Figure 2 to the right (x in [0.44, 0.88])
+  const fig2Landmarks = pose2.landmarks.map(lm => ({
+    ...lm,
+    x: lm.x * 0.72 + 0.38,
+  }));
+  const fig2World = pose2.worldLandmarks.map(wlm => ({
+    ...wlm,
+    x: wlm.x + 0.45,
+  }));
+
+  return {
+    landmarks: fig1Landmarks,
+    worldLandmarks: fig1World,
+    confidence: 0.95,
+    totalPosesDetected: 2,
+    allPoses: [
+      {
+        landmarks: fig1Landmarks,
+        worldLandmarks: fig1World,
+        confidence: 0.96,
+        figureIndex: 0,
+      },
+      {
+        landmarks: fig2Landmarks,
+        worldLandmarks: fig2World,
+        confidence: 0.94,
+        figureIndex: 1,
+      },
+    ],
   };
 }

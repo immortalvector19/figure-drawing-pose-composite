@@ -1,21 +1,21 @@
-import { PoseDetectionResult, PoseLandmarkIndex } from '../types/pose';
+import { PoseDetectionResult, PoseLandmarkIndex, NormalizedLandmark, WorldLandmark } from '../types/pose';
 import { ConstructionPrimitive, ConstructionStyle } from '../types/shapes';
 import { fitHeadPrimitives } from './headFitter';
 import { fitTorsoPrimitives } from './torsoFitter';
 import { fitLimbPrimitives } from './limbFitter';
 import { fitExtremityPrimitives } from './extremityFitter';
 
-export function buildConstructionPrimitives(
-  pose: PoseDetectionResult,
+function buildSinglePosePrimitives(
+  landmarks: NormalizedLandmark[],
+  worldLandmarks: WorldLandmark[],
   imageWidth: number,
   imageHeight: number,
-  style: ConstructionStyle = 'okabayashi'
+  style: ConstructionStyle = 'okabayashi',
+  figureIndex?: number
 ): ConstructionPrimitive[] {
-  if (!pose.landmarks || pose.landmarks.length === 0) {
+  if (!landmarks || landmarks.length === 0) {
     return [];
   }
-
-  const { landmarks, worldLandmarks } = pose;
 
   // Extract baseline primitives from each anatomical region
   let headPrimitives = fitHeadPrimitives(landmarks, worldLandmarks, imageWidth, imageHeight);
@@ -725,5 +725,64 @@ export function buildConstructionPrimitives(
     return b.depthZ - a.depthZ;
   });
 
+  if (figureIndex !== undefined) {
+    return allPrimitives.map(p => ({
+      ...p,
+      id: `fig${figureIndex + 1}-${p.id}`,
+      name: `Figure ${figureIndex + 1}: ${p.name}`,
+    }));
+  }
+
   return allPrimitives;
+}
+
+export function buildConstructionPrimitives(
+  pose: PoseDetectionResult,
+  imageWidth: number,
+  imageHeight: number,
+  style: ConstructionStyle = 'okabayashi'
+): ConstructionPrimitive[] {
+  if (!pose.landmarks || pose.landmarks.length === 0) {
+    return [];
+  }
+
+  // Multi-figure composition
+  if (pose.allPoses && pose.allPoses.length > 1) {
+    const combinedPrimitives: ConstructionPrimitive[] = [];
+    pose.allPoses.forEach((singlePose, figIdx) => {
+      const figPrimitives = buildSinglePosePrimitives(
+        singlePose.landmarks,
+        singlePose.worldLandmarks,
+        imageWidth,
+        imageHeight,
+        style,
+        figIdx
+      );
+      combinedPrimitives.push(...figPrimitives);
+    });
+
+    // 3D Depth Sorting across all figures
+    combinedPrimitives.sort((a, b) => {
+      if (a.type === 'line_of_action') return -1;
+      if (b.type === 'line_of_action') return 1;
+      if (a.type === 'rhythm_line' && b.type !== 'rhythm_line') return 1;
+      if (b.type === 'rhythm_line' && a.type !== 'rhythm_line') return -1;
+      if (a.type === 'facial_thirds' && b.type !== 'facial_thirds') return 1;
+      if (b.type === 'facial_thirds' && a.type !== 'facial_thirds') return -1;
+      if (a.type === 'cross_contour' && b.type !== 'cross_contour') return 1;
+      if (b.type === 'cross_contour' && a.type !== 'cross_contour') return -1;
+      return b.depthZ - a.depthZ;
+    });
+
+    return combinedPrimitives;
+  }
+
+  // Single pose default
+  return buildSinglePosePrimitives(
+    pose.landmarks,
+    pose.worldLandmarks,
+    imageWidth,
+    imageHeight,
+    style
+  );
 }

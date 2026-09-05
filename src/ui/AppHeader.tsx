@@ -1,17 +1,18 @@
 import React, { useRef } from 'react';
 import { ConstructionMode } from '../types/shapes';
-import { Download, Sparkles, Box, FileCode, CheckCircle2, RefreshCw, BookOpen, Pencil, Upload } from 'lucide-react';
+import { Download, Sparkles, Box, FileCode, CheckCircle2, RefreshCw, BookOpen, Pencil, Upload, Users } from 'lucide-react';
 
 interface AppHeaderProps {
   modelReady: boolean;
   constructionMode: ConstructionMode;
   onToggleMode: (mode: ConstructionMode) => void;
-  onLoadSample: (sampleType: 'standing' | 'contrapposto' | 'foreshortened' | 'portrait') => void;
+  onLoadSample: (sampleType: 'standing' | 'contrapposto' | 'foreshortened' | 'portrait' | 'dual') => void;
   onMediaLoaded?: (file: File, type: 'image' | 'video') => void;
   onExportPng: () => void;
   onExportSvg: () => void;
   onOpenAnatomyGuide: () => void;
   hasShapes: boolean;
+  figuresDetectedCount?: number;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -24,6 +25,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   onExportSvg,
   onOpenAnatomyGuide,
   hasShapes,
+  figuresDetectedCount = 0,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -126,7 +128,23 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           >
             Portrait
           </button>
+          <button
+            onClick={() => onLoadSample('dual')}
+            className="text-[11px] px-2 py-0.5 rounded text-studio-200 hover:text-white hover:bg-studio-600/60 transition flex items-center space-x-1"
+            title="Multi-figure reference: 2 distinct figures with independent 3D construction poses"
+          >
+            <Users className="w-3 h-3 text-cyan-400" />
+            <span>Dual Figures</span>
+          </button>
         </div>
+
+        {/* Multi-Figure Detected Badge */}
+        {figuresDetectedCount > 1 && (
+          <div className="hidden md:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-[11px] text-cyan-300 font-medium animate-pulse">
+            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{figuresDetectedCount} Figures Active</span>
+          </div>
+        )}
       </div>
 
       {/* Right: Upload Media, Anatomy Guide & Export Actions */}

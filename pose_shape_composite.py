@@ -166,6 +166,7 @@ class LocalPoseDetector:
             options = vision.PoseLandmarkerOptions(
                 base_options=base_options,
                 output_segmentation_masks=False,
+                num_poses=4,
                 min_pose_detection_confidence=min_detection_confidence,
                 min_tracking_confidence=min_detection_confidence,
             )
@@ -187,15 +188,13 @@ class LocalPoseDetector:
             except Exception as e:
                 raise RuntimeError(f"Failed to initialize MediaPipe Pose: {e}")
 
-    def detect(self, bgr_image: np.ndarray) -> Tuple[Dict[int, Joint], List[str]]:
+    def detect_all(self, bgr_image: np.ndarray) -> Tuple[List[Dict[int, Joint]], List[str]]:
         """
-        Processes an image and returns:
-          1. Dict of Joint objects by index (including synthesized virtual joints)
-          2. List of warning strings for low-confidence or occluded landmarks
+        Processes an image and returns a list of Joint dicts for every detected human figure.
         """
         h, w = bgr_image.shape[:2]
         rgb = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
-        joints: Dict[int, Joint] = {}
+        all_figures: List[Dict[int, Joint]] = []
         warnings: List[str] = []
 
         if self.api_mode == "tasks":
@@ -203,72 +202,77 @@ class LocalPoseDetector:
             res = self.tasks_detector.detect(mp_img)
             if not res.pose_landmarks or len(res.pose_landmarks) == 0:
                 warnings.append("No human pose detected in the reference photo.")
-                return joints, warnings
-            raw_landmarks = res.pose_landmarks[0]
+                return all_figures, warnings
+            all_raw = res.pose_landmarks
         else:
             res = self.legacy_pose.process(rgb)
             if not res.pose_landmarks:
                 warnings.append("No human pose detected in the reference photo.")
-                return joints, warnings
-            raw_landmarks = res.pose_landmarks.landmark
+                return all_figures, warnings
+            all_raw = [res.pose_landmarks.landmark]
 
-        for idx, lm in enumerate(raw_landmarks):
-            vis = getattr(lm, "visibility", 1.0)
-            joints[idx] = Joint(
-                name=f"landmark_{idx}",
-                index=idx,
-                x=lm.x * w,
-                y=lm.y * h,
-                z=getattr(lm, "z", 0.0) * w,
-                visibility=vis,
-            )
+        for raw_landmarks in all_raw:
+            joints: Dict[int, Joint] = {}
+            for idx, lm in enumerate(raw_landmarks):
+                vis = getattr(lm, "visibility", 1.0)
+                joints[idx] = Joint(
+                    name=f"landmark_{idx}",
+                    index=idx,
+                    x=lm.x * w,
+                    y=lm.y * h,
+                    z=getattr(lm, "z", 0.0) * w,
+                    visibility=vis,
+                )
 
-        # Synthesize anatomical midpoints and anchors:
-        sh_l = joints.get(L_LEFT_SHOULDER)
-        sh_r = joints.get(L_RIGHT_SHOULDER)
-        hip_l = joints.get(L_LEFT_HIP)
-        hip_r = joints.get(L_RIGHT_HIP)
-        nose = joints.get(L_NOSE)
+            # Synthesize anatomical midpoints and anchors:
+            sh_l = joints.get(L_LEFT_SHOULDER)
+            sh_r = joints.get(L_RIGHT_SHOULDER)
+            hip_l = joints.get(L_LEFT_HIP)
+            hip_r = joints.get(L_RIGHT_HIP)
+            nose = joints.get(L_NOSE)
 
-        if sh_l and sh_r:
-            # Suprasternal notch / neck base
-            neck_x = (sh_l.x + sh_r.x) / 2.0
-            neck_y = (sh_l.y + sh_r.y) / 2.0
-            neck_vis = min(sh_l.visibility, sh_r.visibility)
-            joints[V_NECK] = Joint("v_neck", V_NECK, neck_x, neck_y, (sh_l.z + sh_r.z) / 2.0, neck_vis)
+            if sh_l and sh_r:
+                neck_x = (sh_l.x + sh_r.x) / 2.0
+                neck_y = (sh_l.y + sh_r.y) / 2.0
+                neck_vis = min(sh_l.visibility, sh_r.visibility)
+                joints[V_NECK] = Joint("v_neck", V_NECK, neck_x, neck_y, (sh_l.z + sh_r.z) / 2.0, neck_vis)
 
-            # Crown of head (projected up through nose/ears)
-            head_h = np.linalg.norm(np.array([sh_l.x, sh_l.y]) - np.array([sh_r.x, sh_r.y])) * 0.8
-            crown_y = max(0.0, neck_y - head_h * 1.3)
-            crown_x = nose.x if (nose and nose.visibility > 0.4) else neck_x
-            joints[V_CROWN] = Joint("v_crown", V_CROWN, crown_x, crown_y, 0.0, neck_vis)
+                head_h = np.linalg.norm(np.array([sh_l.x, sh_l.y]) - np.array([sh_r.x, sh_r.y])) * 0.8
+                crown_y = max(0.0, neck_y - head_h * 1.3)
+                crown_x = nose.x if (nose and nose.visibility > 0.4) else neck_x
+                joints[V_CROWN] = Joint("v_crown", V_CROWN, crown_x, crown_y, 0.0, neck_vis)
 
-        if hip_l and hip_r:
-            # Mid-hip / pelvis center
-            hip_mid_x = (hip_l.x + hip_r.x) / 2.0
-            hip_mid_y = (hip_l.y + hip_r.y) / 2.0
-            hip_vis = min(hip_l.visibility, hip_r.visibility)
-            joints[V_TORSO_BOTTOM] = Joint("v_torso_bottom", V_TORSO_BOTTOM, hip_mid_x, hip_mid_y, (hip_l.z + hip_r.z) / 2.0, hip_vis)
+            if hip_l and hip_r:
+                hip_mid_x = (hip_l.x + hip_r.x) / 2.0
+                hip_mid_y = (hip_l.y + hip_r.y) / 2.0
+                hip_vis = min(hip_l.visibility, hip_r.visibility)
+                joints[V_TORSO_BOTTOM] = Joint("v_torso_bottom", V_TORSO_BOTTOM, hip_mid_x, hip_mid_y, (hip_l.z + hip_r.z) / 2.0, hip_vis)
 
-            # Pelvic base / crotch
-            pelvis_drop = np.linalg.norm(np.array([hip_l.x, hip_l.y]) - np.array([hip_r.x, hip_r.y])) * 0.45
-            joints[V_PELVIS_BOTTOM] = Joint("v_pelvis_bottom", V_PELVIS_BOTTOM, hip_mid_x, hip_mid_y + pelvis_drop, (hip_l.z + hip_r.z) / 2.0, hip_vis)
+                pelvis_drop = np.linalg.norm(np.array([hip_l.x, hip_l.y]) - np.array([hip_r.x, hip_r.y])) * 0.45
+                joints[V_PELVIS_BOTTOM] = Joint("v_pelvis_bottom", V_PELVIS_BOTTOM, hip_mid_x, hip_mid_y + pelvis_drop, (hip_l.z + hip_r.z) / 2.0, hip_vis)
 
-        # Hands (wrist to finger midpoint)
-        for side, wrist_idx, p_idx, i_idx, v_idx in [
-            ("left", L_LEFT_WRIST, L_LEFT_PINKY, L_LEFT_INDEX, V_LEFT_HAND),
-            ("right", L_RIGHT_WRIST, L_RIGHT_PINKY, L_RIGHT_INDEX, V_RIGHT_HAND),
-        ]:
-            wrist = joints.get(wrist_idx)
-            pinky = joints.get(p_idx)
-            index = joints.get(i_idx)
-            if wrist and (pinky or index):
-                hand_x = (pinky.x + index.x) / 2.0 if (pinky and index) else (pinky.x if pinky else index.x)
-                hand_y = (pinky.y + index.y) / 2.0 if (pinky and index) else (pinky.y if pinky else index.y)
-                vis = min(wrist.visibility, 0.8)
-                joints[v_idx] = Joint(f"v_hand_{side}", v_idx, hand_x, hand_y, wrist.z, vis)
+            for side, wrist_idx, p_idx, i_idx, v_idx in [
+                ("left", L_LEFT_WRIST, L_LEFT_PINKY, L_LEFT_INDEX, V_LEFT_HAND),
+                ("right", L_RIGHT_WRIST, L_RIGHT_PINKY, L_RIGHT_INDEX, V_RIGHT_HAND),
+            ]:
+                wrist = joints.get(wrist_idx)
+                pinky = joints.get(p_idx)
+                index = joints.get(i_idx)
+                if wrist and (pinky or index):
+                    hand_x = (pinky.x + index.x) / 2.0 if (pinky and index) else (pinky.x if pinky else index.x)
+                    hand_y = (pinky.y + index.y) / 2.0 if (pinky and index) else (pinky.y if pinky else index.y)
+                    vis = min(wrist.visibility, 0.8)
+                    joints[v_idx] = Joint(f"v_hand_{side}", v_idx, hand_x, hand_y, wrist.z, vis)
 
-        return joints, warnings
+            all_figures.append(joints)
+
+        return all_figures, warnings
+
+    def detect(self, bgr_image: np.ndarray) -> Tuple[Dict[int, Joint], List[str]]:
+        all_figures, warnings = self.detect_all(bgr_image)
+        if not all_figures:
+            return {}, warnings
+        return all_figures[0], warnings
 
 
 # ---------------------------------------------------------------------------
@@ -550,17 +554,19 @@ class PoseShapeCompositePipeline:
         h, w = bgr.shape[:2]
         print(f"\n[PoseComposite] Processing: {reference_path} ({w}x{h} px)")
 
-        # 1. Detect 33 body landmarks
-        joints, warnings = self.detector.detect(bgr)
+        # 1. Detect 33 body landmarks for all figures
+        all_figures_joints, warnings = self.detector.detect_all(bgr)
         for warn in warnings:
             print(f"  [Warning] {warn}")
 
-        if not joints:
+        if not all_figures_joints:
             print("[Error] Landmark extraction failed. Cannot assemble shape mannequin.", file=sys.stderr)
             return False
 
+        print(f"  [Detection] Detected {len(all_figures_joints)} human figure(s).")
+
         # 2. Initialize Asset Manager
-        asset_mgr = AssetManager(self.asset_dir, self.gender, joints)
+        asset_mgr = AssetManager(self.asset_dir, self.gender, all_figures_joints[0])
         print(f"  [Template] Active Template Set: {asset_mgr.gender.upper()} ({asset_mgr.resolved_dir})")
         print(f"  [Assets] Loaded {len(asset_mgr.assets)} shape assets.")
 
@@ -571,70 +577,66 @@ class PoseShapeCompositePipeline:
 
         # 3. Create mannequin canvas matching reference dimensions
         mannequin_canvas = Image.new("RGBA", (w, h), self.bg_color)
+        total_assembled = 0
         occluded_segments: List[str] = []
-        assembled_count = 0
 
         # Sort segments by anatomical z-index
         segments = sorted(get_anatomical_segments(), key=lambda s: s.z_index)
 
-        print("\n  Segment Geometry & Assembly:")
-        print(f"  {'Segment':<18} | {'Length':<8} | {'Angle':<8} | {'Status':<15}")
-        print("  " + "-" * 56)
+        # 4. Transform and layer each body part asset for every detected figure
+        for fig_idx, joints in enumerate(all_figures_joints):
+            fig_prefix = f"[Figure {fig_idx + 1}/{len(all_figures_joints)}]" if len(all_figures_joints) > 1 else ""
+            print(f"\n  {fig_prefix} Segment Geometry & Assembly:")
+            print(f"  {'Segment':<18} | {'Length':<8} | {'Angle':<8} | {'Status':<15}")
+            print("  " + "-" * 56)
 
-        # 4. Transform and layer each body part asset
-        for seg in segments:
-            j_a = joints.get(seg.joint_a)
-            j_b = joints.get(seg.joint_b)
+            fig_assembled_count = 0
+            for seg in segments:
+                j_a = joints.get(seg.joint_a)
+                j_b = joints.get(seg.joint_b)
 
-            if not j_a or not j_b:
-                print(f"  {seg.name:<18} | {'-':<8} | {'-':<8} | Missing Joint")
-                occluded_segments.append(seg.name)
-                continue
+                if not j_a or not j_b:
+                    print(f"  {seg.name:<18} | {'-':<8} | {'-':<8} | Missing Joint")
+                    occluded_segments.append(seg.name)
+                    continue
 
-            # Confidence check for occlusion handling: flag rather than guess
-            if j_a.visibility < self.min_confidence or j_b.visibility < self.min_confidence:
-                status = f"Occluded ({min(j_a.visibility, j_b.visibility):.2f})"
-                print(f"  {seg.name:<18} | {'-':<8} | {'-':<8} | {status}")
-                occluded_segments.append(seg.name)
-                continue
+                if j_a.visibility < self.min_confidence or j_b.visibility < self.min_confidence:
+                    status = f"Occluded ({min(j_a.visibility, j_b.visibility):.2f})"
+                    print(f"  {seg.name:<18} | {'-':<8} | {'-':<8} | {status}")
+                    occluded_segments.append(seg.name)
+                    continue
 
-            # Calculate geometry: midpoint, angle, length
-            midpoint, angle_deg, length = calculate_segment_geometry(j_a, j_b)
+                midpoint, angle_deg, length = calculate_segment_geometry(j_a, j_b)
+                if length < 8.0:
+                    print(f"  {seg.name:<18} | {length:<8.1f} | {'-':<8} | Too Small (<8px)")
+                    continue
 
-            if length < 8.0:
-                print(f"  {seg.name:<18} | {length:<8.1f} | {'-':<8} | Too Small (<8px)")
-                continue
+                asset_match = asset_mgr.find_asset(seg.asset_keys)
+                if not asset_match:
+                    print(f"  {seg.name:<18} | {length:<8.1f} | {angle_deg:<7.1f} deg | No Asset Found")
+                    continue
 
-            # Find matching shape asset
-            asset_match = asset_mgr.find_asset(seg.asset_keys)
-            if not asset_match:
-                print(f"  {seg.name:<18} | {length:<8.1f} | {angle_deg:<7.1f} deg | No Asset Found")
-                continue
+                asset_key, asset_img = asset_match
+                anchor_coord = (j_a.x, j_a.y) if seg.anchor_ratio <= 0.2 else (
+                    midpoint if seg.anchor_ratio == 0.5 else (j_b.x, j_b.y)
+                )
 
-            asset_key, asset_img = asset_match
+                transformed_img, (dest_x, dest_y) = transform_and_place_asset(
+                    asset_img,
+                    target_length=length,
+                    angle_deg=angle_deg,
+                    anchor_joint=anchor_coord,
+                    anchor_ratio=seg.anchor_ratio,
+                    flip_h=seg.flip_horizontal
+                )
 
-            # Determine anchor coordinate (joint A is the primary connecting joint)
-            anchor_coord = (j_a.x, j_a.y) if seg.anchor_ratio <= 0.2 else (
-                midpoint if seg.anchor_ratio == 0.5 else (j_b.x, j_b.y)
-            )
+                mannequin_canvas.paste(transformed_img, (dest_x, dest_y), mask=transformed_img)
+                fig_assembled_count += 1
+                total_assembled += 1
+                print(f"  {seg.name:<18} | {length:<8.1f} | {angle_deg:<7.1f} deg | Assembled ({asset_key})")
 
-            # Deterministic resize and rotation around anchor
-            transformed_img, (dest_x, dest_y) = transform_and_place_asset(
-                asset_img,
-                target_length=length,
-                angle_deg=angle_deg,
-                anchor_joint=anchor_coord,
-                anchor_ratio=seg.anchor_ratio,
-                flip_h=seg.flip_horizontal
-            )
-
-            # Paste onto mannequin canvas using alpha mask
-            mannequin_canvas.paste(transformed_img, (dest_x, dest_y), mask=transformed_img)
-            assembled_count += 1
-            print(f"  {seg.name:<18} | {length:<8.1f} | {angle_deg:<7.1f} deg | Assembled ({asset_key})")
-
-        print("  " + "-" * 56)
-        print(f"  Assembled {assembled_count}/{len(segments)} segments successfully.")
+            print("  " + "-" * 56)
+            print(f"  {fig_prefix} Assembled {fig_assembled_count}/{len(segments)} segments successfully.")
 
         # 5. Composite side-by-side with original reference photo
         ref_pil = Image.fromarray(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB))

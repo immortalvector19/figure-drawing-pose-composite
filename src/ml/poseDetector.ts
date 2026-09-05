@@ -3,7 +3,7 @@ import {
   FilesetResolver,
   PoseLandmarkerResult
 } from '@mediapipe/tasks-vision';
-import { PoseDetectionResult, NormalizedLandmark, WorldLandmark } from '../types/pose';
+import { PoseDetectionResult, NormalizedLandmark, WorldLandmark, SinglePoseData } from '../types/pose';
 
 let landmarkerInstance: PoseLandmarker | null = null;
 let isInitializing = false;
@@ -32,7 +32,7 @@ export async function getPoseLandmarker(): Promise<PoseLandmarker | null> {
           delegate: 'GPU',
         },
         runningMode: 'IMAGE',
-        numPoses: 2,
+        numPoses: 4,
         minPoseDetectionConfidence: 0.15,
         minPosePresenceConfidence: 0.15,
         minTrackingConfidence: 0.15,
@@ -52,7 +52,7 @@ export async function getPoseLandmarker(): Promise<PoseLandmarker | null> {
             delegate: 'CPU',
           },
           runningMode: 'IMAGE',
-          numPoses: 2,
+          numPoses: 4,
           minPoseDetectionConfidence: 0.15,
           minPosePresenceConfidence: 0.15,
           minTrackingConfidence: 0.15,
@@ -88,32 +88,42 @@ function parseLandmarkerResult(result: PoseLandmarkerResult): PoseDetectionResul
       worldLandmarks: [],
       confidence: 0,
       totalPosesDetected: 0,
+      allPoses: [],
     };
   }
 
-  // Choose the most prominent pose (first pose)
-  const primaryLandmarks = result.landmarks[0].map((lm): NormalizedLandmark => ({
-    x: lm.x,
-    y: lm.y,
-    z: lm.z,
-    visibility: lm.visibility,
-  }));
+  // Parse all detected figures
+  const allPoses: SinglePoseData[] = result.landmarks.map((poseLm, pIdx) => {
+    const landmarks = poseLm.map((lm): NormalizedLandmark => ({
+      x: lm.x,
+      y: lm.y,
+      z: lm.z,
+      visibility: lm.visibility,
+    }));
 
-  const primaryWorldLandmarks = result.worldLandmarks?.[0]?.map((wlm): WorldLandmark => ({
-    x: wlm.x,
-    y: wlm.y,
-    z: wlm.z,
-    visibility: wlm.visibility,
-  })) ?? [];
+    const worldLandmarks = result.worldLandmarks?.[pIdx]?.map((wlm): WorldLandmark => ({
+      x: wlm.x,
+      y: wlm.y,
+      z: wlm.z,
+      visibility: wlm.visibility,
+    })) ?? [];
 
-  // Compute average confidence
-  const avgVis = primaryLandmarks.reduce((acc, curr) => acc + (curr.visibility ?? 1), 0) / primaryLandmarks.length;
+    const avgVis = landmarks.reduce((acc, curr) => acc + (curr.visibility ?? 1), 0) / landmarks.length;
+
+    return {
+      landmarks,
+      worldLandmarks,
+      confidence: avgVis,
+      figureIndex: pIdx,
+    };
+  });
 
   return {
-    landmarks: primaryLandmarks,
-    worldLandmarks: primaryWorldLandmarks,
-    confidence: avgVis,
+    landmarks: allPoses[0].landmarks,
+    worldLandmarks: allPoses[0].worldLandmarks,
+    confidence: allPoses[0].confidence,
     totalPosesDetected: totalPoses,
+    allPoses,
   };
 }
 

@@ -21,7 +21,7 @@ import { getPoseLandmarker, detectPoseFromImage } from './ml/poseDetector';
 import { VideoPoseTracker } from './ml/videoProcessor';
 import { buildConstructionPrimitives } from './geometry/sceneBuilder';
 import { evaluateDetectionHeuristics, QualityAlert } from './ml/heuristics';
-import { createSyntheticPose } from './samplePoses';
+import { createSyntheticPose, createMultiFigureSyntheticPose } from './samplePoses';
 import { Proportions } from './geometry/proportions';
 import { downloadPngFile } from './export/pngExporter';
 import { downloadSvgFile } from './export/svgExporter';
@@ -276,8 +276,23 @@ export function App() {
   }, []);
 
   // Load Synthetic Sample Pose presets
-  const handleLoadSample = useCallback((sampleType: 'standing' | 'contrapposto' | 'foreshortened' | 'portrait') => {
+  const handleLoadSample = useCallback((sampleType: 'standing' | 'contrapposto' | 'foreshortened' | 'portrait' | 'dual') => {
     setMediaType('synthetic');
+
+    if (sampleType === 'dual') {
+      const targetW = 950;
+      const targetH = 950;
+      setDimensions({ width: targetW, height: targetH });
+      const pose = createMultiFigureSyntheticPose();
+      const newAlerts = evaluateDetectionHeuristics(pose.landmarks, pose.totalPosesDetected);
+      setAlerts(newAlerts);
+      setLastPoseResult(pose);
+      const primitives = buildConstructionPrimitives(pose, targetW, targetH, constructionStyle);
+      setInitialShapes(primitives);
+      setMediaElement(null);
+      return;
+    }
+
     setDimensions({ width: 700, height: 950 });
 
     const isForeshortened = sampleType === 'foreshortened';
@@ -556,6 +571,7 @@ export function App() {
         onExportSvg={handleExportSvg}
         onOpenAnatomyGuide={() => setShowAnatomyGuide(true)}
         hasShapes={shapes.length > 0}
+        figuresDetectedCount={lastPoseResult?.totalPosesDetected}
       />
 
       {/* Floating Quality & Heuristic Toast Alerts */}

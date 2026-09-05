@@ -60,9 +60,17 @@ export enum PoseLandmarkIndex {
   RIGHT_FOOT_INDEX = 32,
 }
 
+export interface SinglePoseData {
+  landmarks: NormalizedLandmark[];
+  worldLandmarks: WorldLandmark[];
+  confidence: number;
+  figureIndex?: number;
+}
+
 export interface PoseDetectionResult {
   landmarks: NormalizedLandmark[];
   worldLandmarks: WorldLandmark[];
   confidence: number;
   totalPosesDetected: number;
+  allPoses?: SinglePoseData[];
 }
