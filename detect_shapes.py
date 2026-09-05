@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """
-FormMaster CLI: Universal Shape and Landmark Detection Script
-Takes any image, extracts salient landmarks and contours, recognizes primitive geometric shapes
-(spheres, boxes, cylinders, ovals, wedges), and places them directly on the detected objects.
+FormMaster CLI: Still Life & Prop Geometric Shape Detector
+---------------------------------------------------------
+Analyzes still life objects, geometric forms, props, and reference items,
+extracts salient contours and landmarks, recognizes primitive geometric shapes
+(spheres, boxes, cylinders, ovals, wedges), and fits them directly to objects.
+
+Note: This tool uses OpenCV edge/contour analysis and is intended for inanimate
+still lifes and reference objects (e.g. sample_objects.png), NOT for isolating
+human figures from cluttered photographic scenes. For human figure drawing,
+use the Web Studio (npm run dev) or pose_shape_composite.py.
 """
 
 import sys
@@ -14,7 +21,7 @@ from shape_detector import ShapeDetector, PrimitiveType
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Detect and place geometric shapes and landmarks on any image."
+        description="Detect and place geometric shapes on still lifes, objects, and drawing props (NOT for isolating human figures)."
     )
     parser.add_argument("input", help="Path to input image file (JPG, PNG, WebP, etc.)")
     parser.add_argument(
@@ -93,7 +100,7 @@ def main():
         for idx, s in enumerate(result.shapes, start=1):
             center = f"({s.center_x:.0f}, {s.center_y:.0f})"
             size = f"{s.width:.0f}x{s.height:.0f}"
-            angle = f"{s.angle:.1f}°"
+            angle = f"{s.angle:.1f} deg"
             conf = f"{s.confidence:.2f}"
             print(f"{idx:<3} | {s.type.value:<10} | {center:<14} | {size:<14} | {angle:<7} | {conf:<10}")
         print()

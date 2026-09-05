@@ -1,4 +1,4 @@
-﻿# Node dependencies & build artifacts
+# Node dependencies & build artifacts
 node_modules/
 dist/
 
@@ -17,6 +17,8 @@ models/*.onnx
 # Temporary test outputs & cache
 test_run.png
 test_composite.png
+*_composite.png
+*_detected_shapes.png
 *.log
 .tempmediaStorage/
 

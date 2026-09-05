@@ -204,10 +204,11 @@ export const ConstructionCanvas: React.FC<ConstructionCanvasProps> = ({
     if (stageRef.current) {
       try {
         stageRef.current.getLayers().forEach(layer => {
-          const nativeCanvas = layer.getCanvas()?.getContext('2d');
-          if (nativeCanvas) {
-            nativeCanvas.imageSmoothingEnabled = true;
-            nativeCanvas.imageSmoothingQuality = 'high';
+          const htmlCanvas = layer.getCanvas()?._canvas;
+          const ctx = htmlCanvas?.getContext('2d');
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
           }
         });
       } catch {

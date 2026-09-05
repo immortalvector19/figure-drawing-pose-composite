@@ -147,13 +147,17 @@ export function App() {
       );
 
       setInitialShapes(primitives);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error during pose detection:', err);
+      const userMessage =
+        err instanceof Error && err.message
+          ? err.message
+          : 'Could not extract landmarks from this frame. Try a different frame or image.';
       setAlerts([
         {
           type: 'warning',
-          title: 'Detection Error',
-          message: 'Could not extract landmarks from this frame. Try a different frame or image.',
+          title: 'Pose Detection Notice',
+          message: userMessage,
         },
       ]);
     } finally {

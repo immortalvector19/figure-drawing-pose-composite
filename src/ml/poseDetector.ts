@@ -63,7 +63,10 @@ export async function getPoseLandmarker(): Promise<PoseLandmarker | null> {
         isInitializing = false;
         return landmarker;
       } catch (fallbackErr) {
-        console.error('Critical failure loading MediaPipe PoseLandmarker:', fallbackErr);
+        console.error(
+          'Unable to load MediaPipe pose detection model. Please check your internet connection (an active internet connection is required on first launch to download model and WebAssembly assets from the CDN).',
+          fallbackErr
+        );
         isInitializing = false;
         return null;
       }
@@ -114,6 +117,9 @@ function parseLandmarkerResult(result: PoseLandmarkerResult): PoseDetectionResul
   };
 }
 
+export const OFFLINE_ERROR_MSG =
+  'Unable to load MediaPipe pose detection model. Please check your network connection (an internet connection is required on first launch to download model and WASM assets from the CDN).';
+
 /**
  * Detect human pose from an HTMLImageElement or HTMLCanvasElement
  */
@@ -122,7 +128,7 @@ export async function detectPoseFromImage(
 ): Promise<PoseDetectionResult> {
   const landmarker = await getPoseLandmarker();
   if (!landmarker) {
-    throw new Error('Pose estimation engine failed to initialize.');
+    throw new Error(OFFLINE_ERROR_MSG);
   }
 
   if (currentRunningMode !== 'IMAGE') {
@@ -142,7 +148,7 @@ export async function detectPoseFromVideo(
 ): Promise<PoseDetectionResult> {
   const landmarker = await getPoseLandmarker();
   if (!landmarker) {
-    throw new Error('Pose estimation engine failed to initialize.');
+    throw new Error(OFFLINE_ERROR_MSG);
   }
 
   if (currentRunningMode !== 'VIDEO') {

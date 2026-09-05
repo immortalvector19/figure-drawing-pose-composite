@@ -144,10 +144,23 @@ class LocalPoseDetector:
 
             if not os.path.exists(model_path):
                 import urllib.request
+                import urllib.error
                 print(f"[Model] Downloading local MediaPipe model to: {model_path} ...")
                 url = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task"
-                urllib.request.urlretrieve(url, model_path)
-                print("[Model] Download complete. Running 100% locally on local hardware.")
+                try:
+                    urllib.request.urlretrieve(url, model_path)
+                    print("[Model] Download complete. Running 100% locally on local hardware.")
+                except (urllib.error.URLError, TimeoutError, OSError) as dl_err:
+                    print(
+                        f"\n[Error] Unable to download MediaPipe pose model from Google Cloud Storage:\n"
+                        f"        {url}\n"
+                        f"        Reason: {dl_err}\n\n"
+                        f"        An active internet connection is required on first launch to cache the model file.\n"
+                        f"        Once downloaded to '{model_path}', all future runs operate 100% offline.\n"
+                        f"        Alternatively, manually place 'pose_landmarker_full.task' into the '{model_dir}' directory.\n",
+                        file=sys.stderr
+                    )
+                    sys.exit(1)
 
             base_options = python.BaseOptions(model_asset_path=model_path)
             options = vision.PoseLandmarkerOptions(
